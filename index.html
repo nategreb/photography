@@ -2,90 +2,92 @@
 layout: default
 ---
 
-<!-- Wrapper -->
 <div id="wrapper">
-
-    <!-- Header -->
-    <header id="header">
-        <h1><a href="index.html"><strong>{{ site.header.title }}</strong> {{ site.header.subtitle }}</a></h1>
-        <nav>
-            <ul>
-                <li><a href="#footer">About&nbsp;&nbsp;<i class="fa fa-info-circle text-fg"></i></a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <!-- Main -->
-    <div id="main" data-exif='{{ site.exif }}'>
-        {% for image in site.static_files %}
-        {% if image.path contains 'fulls' %}
-        <article class="thumb">
-            <a href="{{ site.baseurl }}{{ site.image_fulls_loc }}/{{ image.name }}" class="image">
-                <img src="{{ site.baseurl }}{{ site.image_thumbs_loc }}/{{ image.name }}" alt=""
-                     data-name="{{ image.name }}"/></a>
-            <!--<h2></h2>
-            <p></p>-->
-        </article>
-        {% endif %}
+  <header id="header">
+    <h1>
+      <a href="index.html">
+        <strong>{{ site.header.title }}</strong> {{ site.header.subtitle }}
+      </a>
+    </h1>
+    <nav>
+      <ul>
+        {% for gallery in site.galleries %}
+        <li>
+          <a
+            href="?folder={{ gallery.folderName | uri_escape }}"
+            class="tab-link active"
+            >{{ gallery.title }}</a
+          >
+        </li>
         {% endfor %}
-    </div>
+        <li><a href="#footer">About <i class="fa fa-info-circle"></i></a></li>
+      </ul>
+    </nav>
+  </header>
 
-    <!-- Footer -->
-    <footer id="footer" class="panel">
-        <div class="inner split">
-            <div>
-                <section>
-                    <h2>{{ site.footer.name }}</h2>
-                    <p>{{ site.footer.bio }}</p>
-                    <p>{{ site.footer.github }}</p>
-                </section>
-                <section>
-                    <h2>Follow me on ...</h2>
-                    <ul class="icons">
-                        {% if site.social_urls.facebook %}
-                            <li>
-                                <a href="{{ site.social_urls.facebook }}" class="icon brands fa-facebook">
-                                    <span class="label">Facebook</span>
-                                </a>
-                            </li>
-                        {% endif %}
-                        {% if site.social_urls.twitter %}
-                            <li>
-                                <a href="{{ site.social_urls.twitter }}" class="icon brands fa-twitter">
-                                    <span class="label">Twitter</span>
-                                </a>
-                            </li>
-                        {% endif %}
-                        {% if site.social_urls.instagram %}
-                            <li>
-                                <a href="{{ site.social_urls.instagram }}" class="icon brands fa-instagram">
-                                    <span class="label">Instagram</span>
-                                </a>
-                            </li>
-                        {% endif %}
-                        {% if site.social_urls.dribbble %}
-                            <li>
-                                <a href="{{ site.social_urls.dribbble }}" class="icon brands fa-dribbble">
-                                    <span class="label">Dribbble</span>
-                                </a>
-                            </li>
-                        {% endif %}
-                        {% if site.social_urls.github %}
-                            <li>
-                                <a href="{{ site.social_urls.github }}" class="icon brands fa-github">
-                                    <span class="label">GitHub</span>
-                                </a>
-                            </li>
-                        {% endif %}
-                        {% if site.social_urls.linkedin %}
-                            <li>
-                                <a href="{{ site.social_urls.linkedin }}" class="icon brands fa-linkedin">
-                                    <span class="label">LinkedIn</span>
-                                </a>
-                            </li>
-                        {% endif %}
-                    </ul>
-                </section>
-            </div>        
-    </footer>
+  <!-- Main -->
+  <div id="main" data-exif='{{ site.exif }}'>
+    {% for image in site.static_files %}
+    {% if image.path contains '/fulls/' %}
+      {% assign folder_name = image.path | remove: '/images/fulls/' | split: '/' | first %}
+      <article class="thumb" data-folder="{{ folder_name }}">
+          <a href="{{ site.baseurl }}{{ image.path }}" class="image">
+          <img
+              src="{{ site.baseurl }}{{ image.path }}"
+              alt="{{ image.name }}"
+              data-name="{{ image.name}}"
+          />
+          </a>
+      </article>
+      {% endif %}
+    {% endfor %}
+  </div>
+
+  <footer id="footer" class="panel">
+    <div class="inner split">
+      <div>
+        <section>
+          <h2>{{ site.footer.name }}</h2>
+          <p>{{ site.footer.bio }}</p>
+        </section>
+      </div>
+    </div>
+  </footer>
 </div>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  let folderName = params.get("folder");
+  // default to first tab if no folder specified
+  if (!folderName) {
+    const firstTab = document.getElementsByClassName("tab-link")[0]
+    folderName = firstTab
+      ? decodeURIComponent(firstTab.getAttribute("href").split("folder=")[1])
+      : "";
+
+    elements = document.querySelectorAll(".tab-link")
+    for (let i = 0; i < elements.length; i++ ){
+      if (i == 0) {
+        elements[i].classList.add("active");
+        console.log(elements[i].classList)
+      } {
+        elements[i].classList.remove("active");
+      }
+    }
+  } else {
+    // highlight active tab
+    document.querySelectorAll(".tab-link").forEach(link => {
+        const linkFolder = decodeURIComponent(link.getAttribute("href").split("folder=")[1] || "");
+        if (linkFolder === folderName) link.classList.add("active");
+        else link.classList.remove("active");
+    });
+  }
+
+
+  // filter images
+  document.querySelectorAll("#main article").forEach(article => {
+    const folder = article.dataset.folder;
+    if (!folderName || folder === folderName) article.style.display = "block";
+    else article.style.display = "none";
+  });
+</script>

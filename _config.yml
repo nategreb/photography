@@ -1,6 +1,13 @@
 # Base configs
-baseurl: "https://nategrebelsky.com"
-#baseurl: "" # Comment the above line and uncomment this to test the website locally
+#baseurl: "https://nategrebelsky.com"
+baseurl: "" # Comment the above line and uncomment this to test the website locally
+
+galleries:
+  - title: "Thailand"
+    folderName: "Thailand"
+  - title: "Washington"
+    folderName: "Washington"
+
 image_fulls_loc: "/images/fulls"
 image_thumbs_loc: "/images/thumbs"
 

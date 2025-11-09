@@ -18,21 +18,21 @@ const generatedCssFiles = [
 ];
 
 gulp.task('delete', function () {
-    return del(['images/*.*']);
+    return del(['images/*/*.*']);
 });
 
-gulp.task('resize-images', function () {
-    return gulp.src('images/*.*')
-        .pipe(imageResize({
-            width: 1024,
-            imageMagick: true
-        }))
-        .pipe(gulp.dest('images/fulls'))
+gulp.task('create-thumbnails', function () {
+    return gulp.src('images/*/*.*')
         .pipe(imageResize({
             width: 512,
             imageMagick: true
         }))
-        .pipe(gulp.dest('images/thumbs'));
+        .pipe(gulp.dest('images/thumbs'))
+});
+
+gulp.task('create-full-dirs', function () {
+    return gulp.src('images/*/*.*')
+        .pipe(gulp.dest('images/fulls')) // keep original size 
 });
 
 // clear previously generated css
@@ -77,7 +77,7 @@ gulp.task('minify-js', function () {
 gulp.task('build', gulp.series('sass', 'minify-js'));
 
 // resize images
-gulp.task('resize', gulp.series('delete', 'resize-images'));
+gulp.task('resize', gulp.series('delete', 'create-full-dirs',  'create-thumbnails'));
 
 // default task
 gulp.task('default', gulp.series('build', 'resize'));
