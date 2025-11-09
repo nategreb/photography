@@ -1,6 +1,6 @@
 # Base configs
-#baseurl: "https://nategrebelsky.com"
-baseurl: "" # Comment the above line and uncomment this to test the website locally
+baseurl: "https://nategrebelsky.com"
+# baseurl: "" # Comment the above line and uncomment this to test the website locally
 
 galleries:
   - title: "Thailand"
@@ -21,6 +21,8 @@ social_urls:
   instagram: "https://www.instagram.com/nategreb"
   linkedin: "https://www.linkedin.com/in/nate-grebelsky/"
   github: "https://github.com/nategreb"
+  strava: "https://www.strava.com/athletes/121131618"
+  twitter: "https://x.com/nategrebelsky"
 
 # Configure which exif data to display
 # Tag is the actual exif tag, icon is a fontawesome icon. Use JSON notation without line breaks
