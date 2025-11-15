@@ -7,6 +7,11 @@ import rename from 'gulp-rename';
 import filter from 'gulp-filter';
 import path from 'path';
 import del from 'del';
+import yargs from 'yargs';
+import { hideBin } from 'yargs/helpers';
+
+const fullsPath = './images/fulls/';
+const thumbsPath = './images/thumbs/';
 
 const sass = gulpSass(dartSass);
 const cssSourceGlob = './assets/sass/**/*.scss';
@@ -20,6 +25,28 @@ const generatedCssFiles = [
 gulp.task('delete', function () {
     return del(['images/*/*.*']);
 });
+
+
+gulp.task('deleteImage', function () {
+    const imageName = yargs(hideBin(process.argv)).parse().imageName
+    
+    if (!imageName) {
+        console.log('❌ Error: Please specify the image name using --imageName=myimage.jpg');
+       // cb(); // Signal that the task is complete (with an error)
+        return;
+    }
+
+    const gallerySubDir = "*/*" 
+    const filesToDelete = [    
+        fullsPath + gallerySubDir + imageName + "*",
+        thumbsPath + gallerySubDir + imageName + "*"
+    ];
+
+    return del(filesToDelete).then(() => {
+        console.log('✅ Image files deleted successfully.');    
+    });
+});
+
 
 gulp.task('create-thumbnails', function () {
     return gulp.src('images/*/*.*')
