@@ -7,6 +7,8 @@ galleries:
     folderName: "Thailand"
   - title: "Washington"
     folderName: "Washington"
+  - title: "Peru"
+    folderName: "Peru"
 
 image_fulls_loc: "/images/fulls"
 image_thumbs_loc: "/images/thumbs"
