@@ -171,83 +171,88 @@
 	// Main.
 	var $main = $("#main"),
 		exifDatas = {};
-  
-	// Thumbs.
-	$main.children(".thumb").each(function () {
-	  var $this = $(this),
-		$image = $this.find(".image"),
-		$image_img = $image.children("img"),
-		x;
-  
-	  // No image? Bail.
-	  if ($image.length == 0) return;
-  
-	  // Image.
-	  // This sets the background of the "image" <span> to the image pointed to by its child
-	  // <img> (which is then hidden). Gives us way more flexibility.
-  
-	  // Set background.
-	  $image.css("background-image", "url(" + $image_img.attr("src") + ")");
-  
-	  // Set background position.
-	  if ((x = $image_img.data("position"))) $image.css("background-position", x);
-  
-	  // Hide original img.
-	  $image_img.hide();
 
-	  // EXIF data
-	  $image_img[0].addEventListener("load", function() {
-		EXIF.getData($image_img[0], function () {
+	function initThumbBackgrounds() {
+	  $main.children(".thumb:not([data-bg-init])").each(function () {
+		var $this = $(this),
+		  $image = $this.find(".image"),
+		  $image_img = $image.children("img"),
+		  x;
+
+		if ($image.length == 0) return;
+
+		$this.attr("data-bg-init", "1");
+
+		// Set background image from the thumb src.
+		$image.css("background-image", "url(" + $image_img.attr("src") + ")");
+
+		if ((x = $image_img.data("position"))) $image.css("background-position", x);
+
+		$image_img.hide();
+
+		// EXIF data
+		$image_img[0].addEventListener("load", function() {
+		  EXIF.getData($image_img[0], function () {
 			exifDatas[$image_img.data('name')] = getExifDataMarkup(this);
+		  });
 		});
 	  });
-	});
-  
-	// Poptrox.
-	$main.poptrox({
-	  baseZIndex: 20000,
-	  caption: function ($a) {
-		var $image_img = $a.children('img');
-		var data = exifDatas[$image_img.data('name')];
-		if (data === undefined) {
-			// EXIF data					
+	}
+
+	// Expose so the inline gallery-loader script can call it after injecting new images.
+	window.initPoptrox = function () {
+	  initThumbBackgrounds();
+
+	  if ($main.data('poptrox')) {
+		try { $main.poptrox('destroy'); } catch(e) {}
+	  }
+
+	  $main.poptrox({
+		baseZIndex: 20000,
+		caption: function ($a) {
+		  var $image_img = $a.children('img');
+		  var data = exifDatas[$image_img.data('name')];
+		  if (data === undefined) {
 			EXIF.getData($image_img[0], function () {
-				data = exifDatas[$image_img.data('name')] = getExifDataMarkup(this);
+			  data = exifDatas[$image_img.data('name')] = getExifDataMarkup(this);
 			});
-		}
-		return data !== undefined ? '<p>' + data + '</p>' : ' ';
-	},
-	  fadeSpeed: 300,
-	  onPopupClose: function () {
-		$body.removeClass("modal-active");
-	  },
-	  onPopupOpen: function () {
-		$body.addClass("modal-active");
-	  },
-	  overlayOpacity: 0,
-	  popupCloserText: "",
-	  popupHeight: 150,
-	  popupLoaderText: "",
-	  popupSpeed: 300,
-	  popupWidth: 150,
-	  selector: ".thumb > a.image",
-	  usePopupCaption: true,
-	  usePopupCloser: true,
-	  usePopupDefaultStyling: false,
-	  usePopupForceClose: true,
-	  usePopupLoader: true,
-	  usePopupNav: true,
-	  windowMargin: 50,
-	});
-  
-	// Hack: Set margins to 0 when 'xsmall' activates.
-	breakpoints.on("<=xsmall", function () {
-	  $main[0]._poptrox.windowMargin = 0;
-	});
-  
-	breakpoints.on(">xsmall", function () {
-	  $main[0]._poptrox.windowMargin = 50;
-	});
+		  }
+		  return data !== undefined ? '<p>' + data + '</p>' : ' ';
+		},
+		fadeSpeed: 300,
+		onPopupClose: function () {
+		  $body.removeClass("modal-active");
+		},
+		onPopupOpen: function () {
+		  $body.addClass("modal-active");
+		},
+		overlayOpacity: 0,
+		popupCloserText: "",
+		popupHeight: 150,
+		popupLoaderText: "",
+		popupSpeed: 300,
+		popupWidth: 150,
+		selector: ".thumb > a.image",
+		usePopupCaption: true,
+		usePopupCloser: true,
+		usePopupDefaultStyling: false,
+		usePopupForceClose: true,
+		usePopupLoader: true,
+		usePopupNav: true,
+		windowMargin: 50,
+	  });
+
+	  // Hack: Set margins to 0 when 'xsmall' activates.
+	  breakpoints.on("<=xsmall", function () {
+		$main[0]._poptrox.windowMargin = 0;
+	  });
+
+	  breakpoints.on(">xsmall", function () {
+		$main[0]._poptrox.windowMargin = 50;
+	  });
+	};
+
+	initPoptrox();
   
 	function getExifDataMarkup(img) {
 		var exif = $('#main').data('exif');
