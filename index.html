@@ -15,7 +15,8 @@ layout: default
         <li>
           <a
             href="?folder={{ gallery.folderName | uri_escape }}"
-            class="tab-link active"
+            class="tab-link"
+            data-folder="{{ gallery.folderName }}"
             >{{ gallery.title }}</a
           >
         </li>
@@ -25,20 +26,24 @@ layout: default
     </nav>
   </header>
 
-  <!-- Main -->
+  <!-- Main: only the default gallery is server-rendered; others are injected on demand -->
   <div id="main" data-exif='{{ site.exif }}'>
+    {% assign default_folder = site.galleries[0].folderName %}
     {% for image in site.static_files %}
-    {% if image.path contains '/fulls/' %}
-      {% assign folder_name = image.path | remove: '/images/fulls/' | split: '/' | first %}
-      <article class="thumb" data-folder="{{ folder_name }}">
-          <a href="{{ site.baseurl }}{{ image.path }}" class="image">
-          <img
-              src="{{ site.baseurl }}{{ image.path }}"
-              alt="{{ image.name }}"
-              data-name="{{ image.name}}"
-          />
-          </a>
-      </article>
+      {% if image.path contains '/fulls/' %}
+        {% assign folder_name = image.path | remove: '/images/fulls/' | split: '/' | first %}
+        {% if folder_name == default_folder %}
+          <article class="thumb" data-folder="{{ folder_name }}">
+            <a href="{{ site.baseurl }}{{ image.path }}" class="image">
+              <img
+                src="{{ site.baseurl }}{{ image.path }}"
+                alt="{{ image.name }}"
+                data-name="{{ image.name }}"
+                loading="lazy"
+              />
+            </a>
+          </article>
+        {% endif %}
       {% endif %}
     {% endfor %}
   </div>
@@ -47,96 +52,140 @@ layout: default
     <div class="inner split">
       <div>
         <div>
-      <section>
-          <h2>{{ site.footer.name }}</h2>
-          <p>{{ site.footer.bio }}</p>
-          <a href="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExazMzYnlmejV1ejRtOGJ2c3dwOHlwaTQwOWphanoxaTRjcXowcm56NyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/RubMXyleqIAWxirYnn/giphy.gif">If you made it to this point</a>
-          <p>{{ site.footer.github }}</p>
-      </section>
-        <section>          
+          <section>
+            <h2>{{ site.footer.name }}</h2>
+            <p>{{ site.footer.bio }}</p>
+            <a href="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExazMzYnlmejV1ejRtOGJ2c3dwOHlwaTQwOWphanoxaTRjcXowcm56NyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/RubMXyleqIAWxirYnn/giphy.gif">If you made it to this point</a>
+            <p>{{ site.footer.github }}</p>
+          </section>
+          <section>
             <ul class="icons">
-                {% if site.social_urls.facebook %}
-                    <li>
-                        <a href="{{ site.social_urls.facebook }}" class="icon brands fa-facebook">
-                            <span class="label">Facebook</span>
-                        </a>
-                    </li>
-                {% endif %}
-                {% if site.social_urls.twitter %}
-                    <li>
-                        <a href="{{ site.social_urls.twitter }}" class="icon brands fa-twitter">
-                            <span class="label">Twitter</span>
-                        </a>
-                    </li>
-                {% endif %}
-                {% if site.social_urls.instagram %}
-                    <li>
-                        <a href="{{ site.social_urls.instagram }}" class="icon brands fa-instagram">
-                            <span class="label">Instagram</span>
-                        </a>
-                    </li>
-                {% endif %}
-                {% if site.social_urls.github %}
-                    <li>
-                        <a href="{{ site.social_urls.github }}" class="icon brands fa-github">
-                            <span class="label">GitHub</span>
-                        </a>
-                    </li>
-                {% endif %}
-                {% if site.social_urls.linkedin %}
-                    <li>
-                        <a href="{{ site.social_urls.linkedin }}" class="icon brands fa-linkedin">
-                            <span class="label">LinkedIn</span>
-                        </a>
-                    </li>
-                {% endif %}
-                 {% if site.social_urls.strava %}
-                    <li>
-                        <a href="{{ site.social_urls.strava }}" class="icon brands fa-strava">
-                            <span class="label">Strava</span>
-                        </a>
-                    </li>
-                {% endif %}
+              {% if site.social_urls.facebook %}
+                <li><a href="{{ site.social_urls.facebook }}" class="icon brands fa-facebook"><span class="label">Facebook</span></a></li>
+              {% endif %}
+              {% if site.social_urls.twitter %}
+                <li><a href="{{ site.social_urls.twitter }}" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+              {% endif %}
+              {% if site.social_urls.instagram %}
+                <li><a href="{{ site.social_urls.instagram }}" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+              {% endif %}
+              {% if site.social_urls.github %}
+                <li><a href="{{ site.social_urls.github }}" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
+              {% endif %}
+              {% if site.social_urls.linkedin %}
+                <li><a href="{{ site.social_urls.linkedin }}" class="icon brands fa-linkedin"><span class="label">LinkedIn</span></a></li>
+              {% endif %}
+              {% if site.social_urls.strava %}
+                <li><a href="{{ site.social_urls.strava }}" class="icon brands fa-strava"><span class="label">Strava</span></a></li>
+              {% endif %}
             </ul>
-        </section>
+          </section>
+        </div>
       </div>
     </div>
   </footer>
 </div>
 
 <script>
-  const params = new URLSearchParams(window.location.search);
-  let folderName = params.get("folder");
-  // default to first tab if no folder specified
-  if (!folderName) {
-    const firstTab = document.getElementsByClassName("tab-link")[0]
-    folderName = firstTab
-      ? decodeURIComponent(firstTab.getAttribute("href").split("folder=")[1])
-      : "";
+(function () {
+  // All gallery image paths embedded at build time by Jekyll — no fetch needed
+  var GALLERY_DATA = {
+    {% for gallery in site.galleries %}
+    "{{ gallery.folderName }}": [
+      {% assign comma = "" %}
+      {% for image in site.static_files %}
+        {% if image.path contains '/fulls/' %}
+          {% assign folder = image.path | remove: '/images/fulls/' | split: '/' | first %}
+          {% if folder == gallery.folderName %}
+            {{ comma }}{ "full": "{{ site.baseurl }}{{ image.path }}", "name": "{{ image.name }}" }
+            {% assign comma = "," %}
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+    ]{% unless forloop.last %},{% endunless %}
+    {% endfor %}
+  };
 
-    elements = document.querySelectorAll(".tab-link")
-    for (let i = 0; i < elements.length; i++ ){
-      if (i == 0) {
-        elements[i].classList.add("active");
-        console.log(elements[i].classList)
-      } {
-        elements[i].classList.remove("active");
+  var loadedFolders = new Set();
+  var params = new URLSearchParams(window.location.search);
+  var folderName = params.get('folder');
+  var tabs = document.querySelectorAll('.tab-link');
+  var defaultFolder = tabs.length ? tabs[0].dataset.folder : '';
+
+  if (!folderName) folderName = defaultFolder;
+
+  tabs.forEach(function (tab) {
+    tab.classList.toggle('active', tab.dataset.folder === folderName);
+  });
+
+  // Default gallery is already in the DOM from server render
+  loadedFolders.add(defaultFolder);
+
+  // If landing on a non-default gallery, inject it now
+  if (folderName !== defaultFolder) {
+    injectImages(folderName, GALLERY_DATA[folderName] || []);
+  }
+
+  // Tab click: inject on first visit, show/hide on subsequent visits
+  tabs.forEach(function (tab) {
+    tab.addEventListener('click', function (e) {
+      e.preventDefault();
+      var folder = tab.dataset.folder;
+
+      var url = new URL(window.location);
+      url.searchParams.set('folder', folder);
+      window.history.pushState({}, '', url);
+
+      tabs.forEach(function (t) {
+        t.classList.toggle('active', t.dataset.folder === folder);
+      });
+
+      if (loadedFolders.has(folder)) {
+        showFolder(folder);
+      } else {
+        injectImages(folder, GALLERY_DATA[folder] || []);
       }
-    }
-  } else {
-    // highlight active tab
-    document.querySelectorAll(".tab-link").forEach(link => {
-        const linkFolder = decodeURIComponent(link.getAttribute("href").split("folder=")[1] || "");
-        if (linkFolder === folderName) link.classList.add("active");
-        else link.classList.remove("active");
+    });
+  });
+
+  function showFolder(folder) {
+    document.querySelectorAll('#main article').forEach(function (article) {
+      article.style.display = article.dataset.folder === folder ? 'block' : 'none';
     });
   }
 
+  function injectImages(folder, images) {
+    var main = document.getElementById('main');
 
-  // filter images
-  document.querySelectorAll("#main article").forEach(article => {
-    const folder = article.dataset.folder;
-    if (!folderName || folder === folderName) article.style.display = "block";
-    else article.style.display = "none";
-  });
+    // Hide other galleries
+    document.querySelectorAll('#main article').forEach(function (a) {
+      a.style.display = 'none';
+    });
+
+    images.forEach(function (img) {
+      var article = document.createElement('article');
+      article.className = 'thumb';
+      article.dataset.folder = folder;
+
+      var a = document.createElement('a');
+      a.href = img.full;
+      a.className = 'image';
+
+      var image = document.createElement('img');
+      image.src = img.full;
+      image.alt = img.name;
+      image.dataset.name = img.name;
+      image.loading = 'lazy';
+
+      a.appendChild(image);
+      article.appendChild(a);
+      main.appendChild(article);
+    });
+
+    loadedFolders.add(folder);
+    showFolder(folder);
+
+    if (typeof initPoptrox === 'function') initPoptrox();
+  }
+})();
 </script>
