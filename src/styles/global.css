@@ -386,8 +386,14 @@ a:hover {
     padding: 0 1rem;
   }
 
+  .nav-logo {
+    display: none;
+  }
+
   .nav-links {
     gap: 0.75rem;
+    width: 100%;
+    justify-content: space-around;
   }
 
   .gallery-section {
