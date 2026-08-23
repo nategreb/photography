@@ -94,9 +94,9 @@
     {
       "filename": "DSCF0442",
       "file": "DSCF0442.JPG",
-      "orientation": "landscape",
-      "width": 4896,
-      "height": 3264
+      "orientation": "portrait",
+      "width": 3264,
+      "height": 4896
     },
     {
       "filename": "DSCF0446",
@@ -115,9 +115,9 @@
     {
       "filename": "DSCF0491",
       "file": "DSCF0491.JPG",
-      "orientation": "landscape",
-      "width": 4896,
-      "height": 3264
+      "orientation": "portrait",
+      "width": 3264,
+      "height": 4896
     },
     {
       "filename": "DSCF0510",
@@ -146,6 +146,50 @@
       "orientation": "portrait",
       "width": 3021,
       "height": 3642
+    }
+  ],
+  "SF": [
+    {
+      "filename": "DSCF1612",
+      "file": "DSCF1612.jpg",
+      "orientation": "landscape",
+      "width": 6240,
+      "height": 4160
+    },
+    {
+      "filename": "DSCF1617",
+      "file": "DSCF1617.jpg",
+      "orientation": "landscape",
+      "width": 6240,
+      "height": 4160
+    },
+    {
+      "filename": "DSCF1623",
+      "file": "DSCF1623.jpg",
+      "orientation": "portrait",
+      "width": 4160,
+      "height": 6240
+    },
+    {
+      "filename": "DSCF1627",
+      "file": "DSCF1627.jpg",
+      "orientation": "portrait",
+      "width": 4160,
+      "height": 6240
+    },
+    {
+      "filename": "DSCF1631",
+      "file": "DSCF1631.jpg",
+      "orientation": "landscape",
+      "width": 6240,
+      "height": 4160
+    },
+    {
+      "filename": "DSCF1632",
+      "file": "DSCF1632.jpg",
+      "orientation": "landscape",
+      "width": 6240,
+      "height": 4160
     }
   ],
   "Thailand": [
@@ -350,16 +394,16 @@
     {
       "filename": "DSCF0767",
       "file": "DSCF0767.JPG",
-      "orientation": "landscape",
-      "width": 6240,
-      "height": 4160
+      "orientation": "portrait",
+      "width": 4160,
+      "height": 6240
     },
     {
       "filename": "DSCF0774",
       "file": "DSCF0774.JPG",
-      "orientation": "landscape",
-      "width": 6240,
-      "height": 4160
+      "orientation": "portrait",
+      "width": 4160,
+      "height": 6240
     },
     {
       "filename": "DSCF0850",
@@ -462,9 +506,9 @@
     {
       "filename": "DSCF1045",
       "file": "DSCF1045.JPG",
-      "orientation": "landscape",
-      "width": 6240,
-      "height": 4160
+      "orientation": "portrait",
+      "width": 4160,
+      "height": 6240
     },
     {
       "filename": "DSCF1064",
@@ -507,6 +551,13 @@
       "orientation": "landscape",
       "width": 5622,
       "height": 3748
+    },
+    {
+      "filename": "DSCF1473",
+      "file": "DSCF1473.jpg",
+      "orientation": "landscape",
+      "width": 6240,
+      "height": 4160
     }
   ]
 }

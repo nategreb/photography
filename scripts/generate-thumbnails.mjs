@@ -44,8 +44,13 @@ async function processGallery(galleryName) {
       continue;
     }
 
-    const w = metadata.width || 1;
-    const h = metadata.height || 1;
+    // Account for EXIF orientation: values 5-8 swap width/height
+    let w = metadata.width || 1;
+    let h = metadata.height || 1;
+    const orient = metadata.orientation || 1;
+    if (orient >= 5 && orient <= 8) {
+      [w, h] = [h, w];
+    }
     const orientation = h > w * 1.2 ? 'portrait' : 'landscape';
 
     results.push({
@@ -69,6 +74,7 @@ async function processGallery(galleryName) {
 
     try {
       await sharp(inputPath)
+        .rotate() // Apply EXIF orientation so output pixels match visual orientation
         .resize({ width: THUMB_WIDTH, withoutEnlargement: true })
         .jpeg({ quality: THUMB_QUALITY, mozjpeg: true })
         .toFile(outputPath);

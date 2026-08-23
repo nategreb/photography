@@ -1,10 +1,13 @@
 ---
+import { getGalleries } from '../lib/galleries';
+
 interface Props {
   title: string;
   description?: string;
 }
 
 const { title, description = 'Photography by Nate Grebelsky' } = Astro.props;
+const galleries = getGalleries();
 ---
 
 <!doctype html>
@@ -26,12 +29,10 @@ const { title, description = 'Photography by Nate Grebelsky' } = Astro.props;
       <div class="nav-inner">
         <a href="/" class="nav-logo">Nate Grebelsky</a>
         <div class="nav-links">
-          <slot name="nav-links">
-            <a href="/#thailand">Thailand</a>
-            <a href="/#washington">Washington</a>
-            <a href="/#peru">Peru</a>
-            <a href="/about">About</a>
-          </slot>
+          {galleries.map((g) => (
+            <a href={`/#${g.slug}`}>{g.name}</a>
+          ))}
+          <a href="/about">About</a>
         </div>
       </div>
     </nav>

@@ -7,6 +7,7 @@ import { join, extname, basename } from 'path';
 
 const IMAGE_EXTS = new Set(['.jpg', '.jpeg', '.png', '.webp']);
 const MANIFEST_PATH = 'public/images/manifest.json';
+const ORDER = ['Washington',  'SF', 'Peru', 'Thailand'];
 
 export interface GalleryImage {
   filename: string;
@@ -31,7 +32,7 @@ export function getGalleries(): Gallery[] {
     return getGalleriesFallback();
   }
 
-  const order = ['Thailand', 'Washington', 'Peru'];
+  
   const galleries: Gallery[] = [];
 
   for (const [galleryName, images] of Object.entries(manifest)) {
@@ -49,11 +50,15 @@ export function getGalleries(): Gallery[] {
     });
   }
 
-  galleries.sort((a, b) => {
-    const ai = order.indexOf(a.name);
-    const bi = order.indexOf(b.name);
-    return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
-  });
+  if (ORDER.length > 0) {
+    galleries.sort((a, b) => {
+      const ai = ORDER.indexOf(a.name);
+      const bi = ORDER.indexOf(b.name);
+      return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
+    });
+  } else {
+    galleries.sort((a, b) => a.name.localeCompare(b.name));
+  }
 
   return galleries;
 }
@@ -79,13 +84,16 @@ function getGalleriesFallback(): Gallery[] {
 
     galleries.push({ name: entry, slug: entry.toLowerCase(), images });
   }
-
-  const order = ['Thailand', 'Washington', 'Peru'];
-  galleries.sort((a, b) => {
-    const ai = order.indexOf(a.name);
-    const bi = order.indexOf(b.name);
-    return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
-  });
+  
+  if (ORDER.length > 0) {
+    galleries.sort((a, b) => {
+      const ai = ORDER.indexOf(a.name);
+      const bi = ORDER.indexOf(b.name);
+      return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
+    });
+  } else {
+    galleries.sort((a, b) => a.name.localeCompare(b.name));
+  }
 
   return galleries;
 }
