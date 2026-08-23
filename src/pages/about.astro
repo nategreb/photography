@@ -1,0 +1,74 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="About — Nate Grebelsky" description="Software engineer, photographer, and explorer.">
+  <div class="about-page">
+    <h1>About</h1>
+
+    <p class="about-intro">
+      Software engineer by day, photographer by weekend. I shoot landscapes and street scenes
+      across the places I travel — currently based in Seattle. I'm drawn to natural light, 
+      moody tones, and moments that make you want to be somewhere else.
+    </p>
+
+    <section class="about-section">
+      <h2>Work</h2>
+      <h3>Amazon — Software Engineer II</h3>
+      <p class="subtitle">Seattle, WA · July 2023 – Present</p>
+      <ul>
+        <li>Designed APIs for network connectivity diagnostics across 250,000+ VPCs</li>
+        <li>Built anti-entropy system reducing consistency windows from unbounded to under 6 hours</li>
+        <li>Spearheaded metric sampling integration, cutting memory consumption 75% in hyperscaled regions</li>
+        <li>Re-architected customer onboarding UI (React/TypeScript), reducing onboarding from 8 hours to 5 minutes</li>
+        <li>Automated large-scale production changes with gradual dial-ups and built-in rollbacks across 200 load balancers</li>
+      </ul>
+    </section>
+
+    <section class="about-section">
+      <h2>Education</h2>
+      <h3>University of Washington</h3>
+      <p class="subtitle">M.S. Computer Science (Professional Master's) · Sep 2026 – Present</p>
+
+      <h3>University of Massachusetts Amherst</h3>
+      <p class="subtitle">B.S. Computer Science & B.S. Mathematics · GPA 3.9 · 2023</p>
+    </section>
+
+    <section class="about-section">
+      <h2>Skills</h2>
+      <div class="skills-grid">
+        <div class="skill-category">
+          <h4>Languages</h4>
+          <p>Go, Java, Python</p>
+        </div>
+        <div class="skill-category">
+          <h4>Cloud & Infra</h4>
+          <p>AWS (Networking, EC2, Lambda, Fargate, State Machines)</p>
+        </div>
+        <div class="skill-category">
+          <h4>Frontend</h4>
+          <p>React, TypeScript</p>
+        </div>
+        <div class="skill-category">
+          <h4>Domains</h4>
+          <p>Distributed Systems, Observability, Networking</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="about-section">
+      <h2>Projects</h2>
+      <ul>
+        <li>Polymarket Arbitrage Bot — Python bot identifying cross-market arbitrage via REST + WebSockets</li>
+        <li>Article Chatbot Chrome Extension — React extension enabling Q&A on web articles using OpenAI/Anthropic APIs</li>
+      </ul>
+    </section>
+
+    <section class="about-section">
+      <h2>Gear</h2>
+      <p class="about-intro" style="margin-bottom: 0;">
+        Fujifilm X-T4 · Various Fujinon primes · iPhone 15 Pro for the moments in between
+      </p>
+    </section>
+  </div>
+</Base>

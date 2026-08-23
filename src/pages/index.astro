@@ -1,0 +1,109 @@
+---
+import Base from '../layouts/Base.astro';
+import { getGalleries } from '../lib/galleries';
+
+const galleries = getGalleries();
+---
+
+<Base title="Nate Grebelsky — Photography">
+  {galleries.map((gallery) => (
+    <section class="gallery-section" id={gallery.slug}>
+      <h2 class="gallery-title">{gallery.name}</h2>
+      <div class="gallery-grid">
+        {gallery.images.map((img) => (
+          <div
+            class={`gallery-item ${img.orientation === 'portrait' ? 'portrait' : ''}`}
+            data-full={img.full}
+            data-name={img.filename}
+          >
+            <img
+              src={img.thumb}
+              alt={img.filename}
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+        ))}
+      </div>
+    </section>
+  ))}
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox">
+    <button class="lightbox-close" aria-label="Close">&times;</button>
+    <img src="" alt="" />
+    <div class="lightbox-caption"></div>
+  </div>
+
+  <script is:inline slot="scripts">
+    // Intersection Observer for fade-in on scroll
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { rootMargin: '50px', threshold: 0.1 }
+    );
+
+    document.querySelectorAll('.gallery-item').forEach((item) => {
+      observer.observe(item);
+    });
+
+    // Lightbox
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = lightbox.querySelector('img');
+    const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+
+    document.querySelectorAll('.gallery-item').forEach((item) => {
+      item.addEventListener('click', () => {
+        const fullSrc = item.dataset.full;
+        const name = item.dataset.name;
+        lightboxImg.src = fullSrc;
+        lightboxImg.alt = name;
+        lightboxCaption.textContent = name.replace(/[-_]/g, ' ');
+        lightbox.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      });
+    });
+
+    lightbox.addEventListener('click', (e) => {
+      if (e.target === lightbox || e.target.classList.contains('lightbox-close')) {
+        lightbox.classList.remove('open');
+        document.body.style.overflow = '';
+        lightboxImg.src = '';
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && lightbox.classList.contains('open')) {
+        lightbox.classList.remove('open');
+        document.body.style.overflow = '';
+        lightboxImg.src = '';
+      }
+    });
+
+    // Active nav link highlight on scroll
+    const sections = document.querySelectorAll('.gallery-section');
+    const navLinks = document.querySelectorAll('.nav-links a[href^="/#"]');
+
+    const navObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const id = entry.target.id;
+            navLinks.forEach((link) => {
+              link.classList.toggle('active', link.getAttribute('href') === `/#${id}`);
+            });
+          }
+        });
+      },
+      { rootMargin: '-40% 0px -60% 0px' }
+    );
+
+    sections.forEach((section) => navObserver.observe(section));
+  </script>
+</Base>
